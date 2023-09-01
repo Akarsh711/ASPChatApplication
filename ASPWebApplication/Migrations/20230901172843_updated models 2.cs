@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace ASPWebApplication.Data.Migrations
+namespace ASPWebApplication.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class updatedmodels2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
