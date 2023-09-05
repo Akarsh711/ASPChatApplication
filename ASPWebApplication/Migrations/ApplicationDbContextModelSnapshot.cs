@@ -73,6 +73,101 @@ namespace ASPWebApplication.Migrations
                     b.ToTable("AppointmentViewModel");
                 });
 
+            modelBuilder.Entity("ASPWebApplication.Models.ChatRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContactId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("ChatRoom");
+                });
+
+            modelBuilder.Entity("ASPWebApplication.Models.Contact", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Friend")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MessageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("Contact");
+                });
+
+            modelBuilder.Entity("ASPWebApplication.Models.Friends", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PersonOneId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PersonOneObjId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PersonTwoId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PersonTwoObjId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonOneObjId");
+
+                    b.HasIndex("PersonTwoObjId");
+
+                    b.ToTable("Friends");
+                });
+
+            modelBuilder.Entity("ASPWebApplication.Models.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Message");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -137,6 +232,9 @@ namespace ASPWebApplication.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ContactId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -178,6 +276,8 @@ namespace ASPWebApplication.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -275,6 +375,47 @@ namespace ASPWebApplication.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ASPWebApplication.Models.ChatRoom", b =>
+                {
+                    b.HasOne("ASPWebApplication.Models.Contact", "ContactObj")
+                        .WithMany()
+                        .HasForeignKey("ContactId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ASPWebApplication.Models.Message", "MessageObj")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContactObj");
+
+                    b.Navigation("MessageObj");
+                });
+
+            modelBuilder.Entity("ASPWebApplication.Models.Contact", b =>
+                {
+                    b.HasOne("ASPWebApplication.Models.Message", null)
+                        .WithMany("ContactObjs")
+                        .HasForeignKey("MessageId");
+                });
+
+            modelBuilder.Entity("ASPWebApplication.Models.Friends", b =>
+                {
+                    b.HasOne("ASPWebApplication.Models.Contact", "PersonOneObj")
+                        .WithMany()
+                        .HasForeignKey("PersonOneObjId");
+
+                    b.HasOne("ASPWebApplication.Models.Contact", "PersonTwoObj")
+                        .WithMany()
+                        .HasForeignKey("PersonTwoObjId");
+
+                    b.Navigation("PersonOneObj");
+
+                    b.Navigation("PersonTwoObj");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -282,6 +423,13 @@ namespace ASPWebApplication.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.HasOne("ASPWebApplication.Models.Contact", null)
+                        .WithMany("UserObjs")
+                        .HasForeignKey("ContactId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -324,6 +472,16 @@ namespace ASPWebApplication.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ASPWebApplication.Models.Contact", b =>
+                {
+                    b.Navigation("UserObjs");
+                });
+
+            modelBuilder.Entity("ASPWebApplication.Models.Message", b =>
+                {
+                    b.Navigation("ContactObjs");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "iSmHP6RdMXwvaXPIDlC2NFR4Ph7LCZ7MFjQ439ATlz8=",
+  "Hash": "r5FMQ0lyYWrl0fzAgN9gKdhhgFAUzFeYRwjUXyvYsHQ=",
   "Source": "ASPWebApplication",
   "BasePath": "_content/ASPWebApplication",
   "Mode": "Default",
@@ -2089,6 +2089,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\paliw\\OneDrive\\Desktop\\ASPWebApplication\\ASPWebApplication\\wwwroot\\user.png",
+      "SourceId": "ASPWebApplication",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\paliw\\OneDrive\\Desktop\\ASPWebApplication\\ASPWebApplication\\wwwroot\\",
+      "BasePath": "_content/ASPWebApplication",
+      "RelativePath": "user.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\user.png"
     }
   ]
 }
