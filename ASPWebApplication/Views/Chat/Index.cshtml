@@ -17,12 +17,31 @@
             integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="style.css">
+   
 
     <title>Document</title>
 </head>
 
 <body>
+    <div class="contact_form">
+        <div>
+            <form action="/Chat/CreateRoom" method="post">
+                @Html.AntiForgeryToken();
+                <div>
+                    <input placeholder="Type email" name="email" type="email" value="test2@test.com"/>
+                </div>
+                <div>
+                    <input placeholder="Type Room/Recipient name" name="room_name" type="text"/>
+                </div>
+                <input name ="user_id"  value="@ViewData["id"]"/>
+                <input name="contact_id"  value="@ViewData["contact_id"]" />
+
+                <div>
+                    <button type="submit"> submit </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Navbar</a>
@@ -73,9 +92,12 @@
                     </form>
 
                 </div>
-                <!-- <i class="fa-solid fa-ellipsis-vertical"></i> -->
                 <div class="picture">
-                    <img src="user.png" style="color: white;" alt="" srcset="">
+                    @*<img src="user.png" style="color: white;" alt="" srcset="">*@
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </div>
+                <div class="menu">
+                    <div onclick="contact_form()">Add new contact</div>
                 </div>
             </div>
 
@@ -85,7 +107,7 @@
                         <img src="user.png" style="color: white;" alt="" srcset="">
                     </div>
 
-                    <div class="name">
+                    <div class="name" onclick="onCotactSelect()">
                         <p>Bunny ji</p>
                     </div>
                 </div>
@@ -131,7 +153,7 @@
                 </div>
 
                 <div class="user">
-                    Otheruserprofile
+                    @@Otheruserprofile
                 </div>
                 <div class="picture">
                     <img src="user.png" style="color: white;" alt="" srcset="">
@@ -233,9 +255,9 @@
                 </div>
 
                 <div class="large-icon send-icon">
-                    <button>
+                    <button class="message-btn">
                         <i class="fa-solid fa-paper-plane" id="sendButton"></i>
-
+                        <button  onclick="Test()">Test</button>
                     </button>
                 </div>
 
@@ -248,19 +270,78 @@
     <script>
 
         var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        const loged_in_user = '@ViewData["id"]';
+        const contact_id = @ViewData["contact_id"];
+        
+        function Test(){
+            connection.invoke("CreateContact", "1a8de800-6908-4f54-a2c4-43223f2e5530", "9be17972-ca94-4661-8ff0-7da291b7fe57");
+        }
+        
+        function onCotactSelect(){
+            console.log("method invoked successfully");
+            connection.invoke("FetchMessages", 1, "1a8de800-6908-4f54-a2c4-43223f2e5530");
+        }
+        
+        connection.on("FetchMessages", function(messages_list){
+            messages_list = JSON.parse(messages_list);
+            $(".user")[0].remove();
 
-        connection.on("ReceiveMessage", function (user, message) {
+            $(".chat-item").remove();
+            for(var i = 0; i < messages_list.length; i++){
+                console.log("message baby:");
+                console.log(messages_list[i]);
+                let msg;
+                console.log(i);
+                if (messages_list[i].SenderId != loged_in_user) {
+                    msg = `<div class="chat-item right">
+                                            <div class="flex">
+                                                <div class="content-box-right ">
+                                                    <div class="message">
+                                                        ${messages_list[i].Text}
+                                                    </div>
+
+                                                    <div class="timestamp">${messages_list[i].Timestamp}</div>
+                                                </div>
+                                                <div class="picture">
+                                                    <img class="chat-img" src="user.png" style="color: white;" alt="" srcset="">
+                                                </div>
+                                            </div>
+                                        </div>`
+                    console.log("if.........");
+                }
+                else {
+                    msg = `<div class="chat-item left">
+                                                        <div class="flex">
+                                                        <div class="picture">
+                                                            <img class="chat-img" src="user.png" style="color: white;" alt="" srcset="">
+                                                        </div>
+                                                        <div class="content-box">
+                                                            <div class="message">
+                                                                                ${messages_list[i].Text}
+                                                            </div>
+                                                                    <div class="timestamp">${messages_list[i].Timestamp}</div>
+                                                        </div>
+                                                        </div>
+                                                    </div>`;
+                    console.log("else.........");
+                }
+                
+                $(".chat-items")[0].append($.parseHTML(msg)[0]);
+
+            }
+            
+        });
+        
+        connection.on("ReceiveMessage", function (user, message, chat_room_id) {
+            //console.log(chat_room);
             var encodedUser = $("<div />").text(user).html();
             var encodedMsg = $("<div />").text(message).html();
             console.log("recieved new");
 
-
-            
-            @{var obj = ViewData["user"];}
-            @{var id =  ViewData["id"];}
-            @if(User.Identity.Equals(obj)){
-                <text>
-                let msg = `<div class="chat-item right">
+            console.log(user+ " , "+loged_in_user);
+            let msg;
+            if(user != loged_in_user){
+                msg = `<div class="chat-item right">
                                     <div class="flex">
                                         <div class="content-box-right ">
                                             <div class="message">
@@ -274,39 +355,41 @@
                                         </div>
                                     </div>
                                 </div>`
-                </text>
+                console.log("if.........");
             }
             else{
-                            <text> 
-                            let msg = `<div class="chat-item left">
-                                                         <div class="flex">
-                                                           <div class="picture">
-                                                             <img class="chat-img" src="user.png" style="color: white;" alt="" srcset="">
-                                                           </div>
-                                                           <div class="content-box">
-                                                             <div class="message">
-                                                              ${encodedMsg}
-
-                                                             <div class="timestamp">09:09</div>
-                                                           </div>
-                                                         </div>
-                                                       </div>`;
-                            </text>
+                msg = `<div class="chat-item left">
+                                                <div class="flex">
+                                                <div class="picture">
+                                                    <img class="chat-img" src="user.png" style="color: white;" alt="" srcset="">
+                                                </div>
+                                                <div class="content-box">
+                                                    <div class="message">
+                                                                ${encodedMsg}
+                                                    </div>
+                                                    <div class="timestamp">09:09</div>
+                                                </div>
+                                                </div>
+                                            </div>`;
+                console.log("else.........");
             }
             
-            console.log(msg)
+            console.log(msg);
             console.log('yahn si aagya');
+            
             $(".chat-items")[0].append($.parseHTML(msg)[0]);
 
         });
 
+        
+
         $("#sendButton").click(function () {
             // var user = $("#username").val();
-            var user = '@ViewData["id"]' ;//HttpContext.Current.User.Identity.GetUserId();
+            var user = loged_in_user;//HttpContext.Current.User.Identity.GetUserId();
 
             var message = $("#message-box").val();
             console.log("send clicked");
-            connection.invoke("SendMessage", user, message);
+            connection.invoke("SendMessage", user, message, 1);
             $("#message-box").val("").focus();
         });
 
@@ -328,9 +411,41 @@
     </script>
     <style>
         /* -----------------------Side bar css -------------------- */
-        button {
-            display:;
+        .menu {
+            position: absolute;
+            background: white;
+            border-radius: 5px;
+            padding: 5px;
+            border: 2px solid #537FE8;
+            color: #537FE8;
         }
+
+        .message-btn {
+            background: #537FE7;
+            outline: none;
+            /* box-shadow: none; */
+            /* border-block-end-style: none; */
+            border: 1px;
+            border-radius: 50%;
+            height: 45px;
+            width: 45px;
+            transition: background-color 0.5s;
+        }
+
+            .message-btn:hover {
+                background-color: #80a4ff
+            }
+
+        #message-box {
+            width: 100%;
+            border: none;
+            background-color: transparent;
+            color: white;
+            outline: none;
+        }
+
+
+
 
         .sub-container {
             display: flex;
@@ -494,8 +609,8 @@
         }
 
         /* .chat-items > .two{
-                    justify-self: end;
-                  } */
+            justify-self: end;
+          } */
 
         .left-message > .timestamp {
             float: left;
@@ -531,21 +646,24 @@
             display: flex;
             margin-top: 15px;
             padding: 1px;
+            align-items: center;
         }
 
 
         .text-box {
             /* margin: 23px; */
+            /* margin: 23px; */
             width: 95%;
             border: 2px solid gray;
             display: flex;
             justify-content: end;
-            gap: 10px;
-            padding-right: 10px;
+            /* gap: 10px; */
+            /* padding-right: 10px; */
             padding-left: 15px;
             align-items: center;
-            height: 40px;
+            /* height: 40px; */
             border-radius: 23px 23px 23px 23px;
+            margin-right: 10px;
         }
 
             .text-box > textarea {
@@ -577,6 +695,7 @@
             width: 40px;
             border-radius: 50%;
             /* transform: translateX(10px); */
+            transition: background-color 0.5s;
         }
 
         .emoji-icon {
@@ -589,6 +708,7 @@
             width: 40px;
             border-radius: 50%;
             /* transform: translateX(20px); */
+            transition: background-color 0.5s;
         }
 
             .pin-icon:hover, .emoji-icon:hover {
