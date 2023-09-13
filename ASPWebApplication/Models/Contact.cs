@@ -9,6 +9,6 @@ namespace ASPWebApplication.Models
         [Key]
         public int Id { get; set; }
         public required IdentityUser User { get; set; }
-        public ICollection<ChatRoom> ChatRooms { get; set; } = new List<ChatRoom>();
+        public List<ChatRoom> ChatRooms { get; set; } = new List<ChatRoom>();
     }
 }

@@ -25,7 +25,7 @@ namespace ASPWebApplication.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
-            int id = 1;
+            
             Contact contact;
             try
             {
@@ -36,6 +36,7 @@ namespace ASPWebApplication.Controllers
                 contact = new Contact()
                 {
                     User = user,
+                    ChatRooms = new List<ChatRoom>()
                 };
                 _context.Contact.Add(contact);
                 _context.SaveChanges();
@@ -46,55 +47,50 @@ namespace ASPWebApplication.Controllers
             ViewData["id"] = user.Id.ToString();
             ViewData["user"] = user;
             ViewData["contact_id"] = contact.Id;
-            //Identit
-            return View();
+            // return View();
+            return RedirectToAction("ChatView");
         }
 
+        public async Task<IActionResult> ChatView()
+        {
+            IdentityUser user = await _userManager.GetUserAsync(User);
+            Contact contact = _context.Contact.Where(u => u.User == user).Include(u => u.ChatRooms).FirstOrDefault();
+            ICollection<ChatRoom> chat_room_list = contact.ChatRooms;
 
-        
+            ViewData["id"] = user.Id.ToString();
+            ViewData["user"] = user;
+            ViewData["contact_id"] = contact.Id;
+            ViewData["chat_room_list"] = chat_room_list;
 
-        
+            System.Diagnostics.Debug.WriteLine("redirected.........");
+
+            return View("Index");
+        }
+
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> CreateRoom(int contact_id, string email, string room_name)
         {
-            
 
-            Contact loged_in_user = _context.Contact.Where(c => c.Id == contact_id).Include(c => c.User).First();
-            Contact other_user = _context.Contact.Where(c => c.User.Email == email).First();
-            //System.Diagnostics.Debug.WriteLine("-----------------------create room running...");
-            //System.Diagnostics.Debug.WriteLine("-----------------------create room running..." + contact_id);
+            Contact loged_in_user = _context.Contact.Where(c => c.Id == contact_id).Include(c => c.ChatRooms).First();
+            Contact other_user = _context.Contact.Where(c =>c.User.Email == email).Include(c => c.ChatRooms).First();
 
-            //var usr = loged_in_user.User;
-            //System.Diagnostics.Debug.WriteLine("-----------------------create room running..."+usr.Email.ToString());
-            //System.Diagnostics.Debug.WriteLine("-----------------------create room running..."+other_user.User.Id);
-
-
-            var chat_room = new ChatRoom()
+            ChatRoom chat_room = new ChatRoom()
             {
                 Name = room_name,
             };
+            
 
-            _context.ChatRoom.Add(chat_room);
-            //_context.SaveChanges();
-
-            //_context.Update(loged_in_user);
-
+            
+            
             other_user.ChatRooms.Add(chat_room);
-            //_context.SaveChanges();
-
-            loged_in_user.ChatRooms.Add(chat_room);
-            _context.SaveChanges();
-
-            //_context.Update(other_user);
-
-
-            _context.Entry(loged_in_user).State = EntityState.Modified;
-            
+            ChatRoom chat_room2 = new ChatRoom()
+            {
+                Name = room_name,
+            };
+            loged_in_user.ChatRooms.Add(chat_room2);
             _context.SaveChanges();
             
-            System.Diagnostics.Debug.WriteLine("-----------------------state"+ _context.Entry(other_user).State);
-
             return View("Index");
         }
 

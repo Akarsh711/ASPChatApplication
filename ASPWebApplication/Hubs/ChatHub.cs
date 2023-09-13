@@ -64,7 +64,7 @@ namespace ASPWebApplication.Hubs
                 var chat_room = _context.ChatRoom.Where(c => c.Id == chat_room_id).FirstOrDefault();
                 var sender = _context.Users.Where(u => u.Id == user_id).FirstOrDefault();
                 System.Diagnostics.Debug.WriteLine("-----------------------Entering into Exisisting Room...");
-                var msg = new Models.Message()  //we added model just because, before it showing me abiguity
+                var msg = new Models.Message()  // we added model just because, before it showing me abiguity
                                                 // with name Message in Nuget 
                 {
                     Text = message,

@@ -3,6 +3,10 @@
     "mssql1": {
       "restored": true,
       "restoreTime": "2023-08-31T15:36:23.6591769Z"
+    },
+    "sqlite1": {
+      "restored": true,
+      "restoreTime": "2023-09-12T18:18:49.4218747Z"
     }
   },
   "parameters": {}

@@ -102,48 +102,22 @@
             </div>
 
             <div class="contacts">
-                <div class="single-contact">
-                    <div class="picture">
-                        <img src="user.png" style="color: white;" alt="" srcset="">
+                @{
+                    var items = ViewData["chat_room_list"] as List<ChatRoom>;
+                }
+                @foreach (var item in items)
+                {
+                    <div class="single-contact">
+                        <div class="picture">
+                            <img src="user.png" style="color: white;" alt="" srcset="">
+                        </div>
+                        
+                        <div class="name" onclick="onCotactSelect()">
+                            <p>@item.Name</p>
+                        </div>
                     </div>
-
-                    <div class="name" onclick="onCotactSelect()">
-                        <p>Bunny ji</p>
-                    </div>
-                </div>
-                <div class="single-contact">
-                    <div class="picture">
-                        <img src="user.png" style="color: white;" alt="" srcset="">
-                    </div>
-
-                    <div class="name">
-                        <p>Bunny ji</p>
-                    </div>
-                </div> <div class="single-contact">
-                    <div class="picture">
-                        <img src="user.png" style="color: white;" alt="" srcset="">
-                    </div>
-
-                    <div class="name">
-                        <p>Bunny ji</p>
-                    </div>
-                </div> <div class="single-contact">
-                    <div class="picture">
-                        <img src="user.png" style="color: white;" alt="" srcset="">
-                    </div>
-
-                    <div class="name">
-                        <p>Bunny ji</p>
-                    </div>
-                </div> <div class="single-contact">
-                    <div class="picture">
-                        <img src="user.png" style="color: white;" alt="" srcset="">
-                    </div>
-
-                    <div class="name">
-                        <p>Bunny ji</p>
-                    </div>
-                </div>
+                }
+                
             </div>
         </div>
         <div class="main-area">

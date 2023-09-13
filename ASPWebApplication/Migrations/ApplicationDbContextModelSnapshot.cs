@@ -81,15 +81,10 @@ namespace ASPWebApplication.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ContactId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ContactId");
 
                     b.ToTable("ChatRoom");
                 });
@@ -172,6 +167,21 @@ namespace ASPWebApplication.Migrations
                     b.HasIndex("SenderObjId");
 
                     b.ToTable("Message");
+                });
+
+            modelBuilder.Entity("ChatRoomContact", b =>
+                {
+                    b.Property<int>("ChatRoomsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ContactObjsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ChatRoomsId", "ContactObjsId");
+
+                    b.HasIndex("ContactObjsId");
+
+                    b.ToTable("ChatRoomContact");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -376,13 +386,6 @@ namespace ASPWebApplication.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ASPWebApplication.Models.ChatRoom", b =>
-                {
-                    b.HasOne("ASPWebApplication.Models.Contact", null)
-                        .WithMany("ChatRooms")
-                        .HasForeignKey("ContactId");
-                });
-
             modelBuilder.Entity("ASPWebApplication.Models.Contact", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
@@ -422,6 +425,21 @@ namespace ASPWebApplication.Migrations
                     b.Navigation("ChatRoomObj");
 
                     b.Navigation("SenderObj");
+                });
+
+            modelBuilder.Entity("ChatRoomContact", b =>
+                {
+                    b.HasOne("ASPWebApplication.Models.ChatRoom", null)
+                        .WithMany()
+                        .HasForeignKey("ChatRoomsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ASPWebApplication.Models.Contact", null)
+                        .WithMany()
+                        .HasForeignKey("ContactObjsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -478,11 +496,6 @@ namespace ASPWebApplication.Migrations
             modelBuilder.Entity("ASPWebApplication.Models.ChatRoom", b =>
                 {
                     b.Navigation("MessageObjs");
-                });
-
-            modelBuilder.Entity("ASPWebApplication.Models.Contact", b =>
-                {
-                    b.Navigation("ChatRooms");
                 });
 #pragma warning restore 612, 618
         }
