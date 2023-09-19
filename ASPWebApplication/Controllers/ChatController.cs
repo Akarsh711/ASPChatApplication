@@ -7,12 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ASPWebApplication.Controllers
 {
-
     public class ChatController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ApplicationDbContext _context;
-
 
         public ChatController(UserManager<IdentityUser> userManager, ApplicationDbContext context)
         {
@@ -51,11 +49,13 @@ namespace ASPWebApplication.Controllers
             return RedirectToAction("ChatView");
         }
 
+        [Authorize]
         public async Task<IActionResult> ChatView()
         {
             IdentityUser user = await _userManager.GetUserAsync(User);
             Contact contact = _context.Contact.Where(u => u.User == user).Include(u => u.ChatRooms).FirstOrDefault();
-            ICollection<ChatRoom> chat_room_list = contact.ChatRooms;
+            
+            ICollection<ChatRoom> chat_room_list = _context.ChatRoom.Where(c => c.ContactObjs.Any(contact => contact.User == user)).ToList();
 
             ViewData["id"] = user.Id.ToString();
             ViewData["user"] = user;
@@ -71,29 +71,48 @@ namespace ASPWebApplication.Controllers
         [Authorize]
         public async Task<IActionResult> CreateRoom(int contact_id, string email, string room_name)
         {
-
             Contact loged_in_user = _context.Contact.Where(c => c.Id == contact_id).Include(c => c.ChatRooms).First();
             Contact other_user = _context.Contact.Where(c =>c.User.Email == email).Include(c => c.ChatRooms).First();
+
+            ICollection<Contact> contact_list = new List<Contact>();
+            contact_list.Add(loged_in_user);
+            contact_list.Add(other_user);
 
             ChatRoom chat_room = new ChatRoom()
             {
                 Name = room_name,
+                ContactObjs = contact_list,
             };
-            
-
-            
-            
-            other_user.ChatRooms.Add(chat_room);
-            ChatRoom chat_room2 = new ChatRoom()
-            {
-                Name = room_name,
-            };
-            loged_in_user.ChatRooms.Add(chat_room2);
+            _context.ChatRoom.Add(chat_room);
             _context.SaveChanges();
-            
-            return View("Index");
+            return Redirect("Index");
+
+
+           
+
+            //Contact loged_in_user = _context.Contact.Where(c => c.Id == contact_id).Include(c => c.ChatRooms).First();
+            //Contact other_user = _context.Contact.Where(c =>c.User.Email == email).Include(c => c.ChatRooms).First();
+
+
+            //ChatRoom chat_room = new ChatRoom()
+            //{
+            //    Name = room_name,
+
+            //};
+
+            //other_user.ChatRooms.Add(chat_room);
+            //ChatRoom chat_room2 = new ChatRoom()
+            //{
+            //    Name = room_name,
+            //};
+            //loged_in_user.ChatRooms.Add(chat_room2);
+            //_context.SaveChanges();
+
+            //return View("Index");
         }
 
+
+        
 
         public async Task<IActionResult> Test()
         {

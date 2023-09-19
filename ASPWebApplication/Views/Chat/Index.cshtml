@@ -109,10 +109,10 @@
                 {
                     <div class="single-contact">
                         <div class="picture">
-                            <img src="user.png" style="color: white;" alt="" srcset="">
+                            <img src="user.png" style="color: white;">
                         </div>
-                        
-                        <div class="name" onclick="onCotactSelect()">
+                            
+                        <div class="name" onclick="onCotactSelect(@item.Id)">
                             <p>@item.Name</p>
                         </div>
                     </div>
@@ -247,18 +247,25 @@
         const loged_in_user = '@ViewData["id"]';
         const contact_id = @ViewData["contact_id"];
         
+        let chat_room_id;
+        
         function Test(){
             connection.invoke("CreateContact", "1a8de800-6908-4f54-a2c4-43223f2e5530", "9be17972-ca94-4661-8ff0-7da291b7fe57");
         }
         
-        function onCotactSelect(){
+        function onCotactSelect(room_id){
+
+            chat_room_id = room_id;
+            //$(".chat-item").remove();
             console.log("method invoked successfully");
-            connection.invoke("FetchMessages", 1, "1a8de800-6908-4f54-a2c4-43223f2e5530");
+            connection.invoke("FetchMessages", room_id, "1a8de800-6908-4f54-a2c4-43223f2e5530");
         }
         
         connection.on("FetchMessages", function(messages_list){
+            console.log("fetching....");
             messages_list = JSON.parse(messages_list);
-            $(".user")[0].remove();
+            // $(".user")[0].remove();
+            if(messages_list == [])return;
 
             $(".chat-item").remove();
             for(var i = 0; i < messages_list.length; i++){
@@ -360,10 +367,10 @@
         $("#sendButton").click(function () {
             // var user = $("#username").val();
             var user = loged_in_user;//HttpContext.Current.User.Identity.GetUserId();
-
+            
             var message = $("#message-box").val();
             console.log("send clicked");
-            connection.invoke("SendMessage", user, message, 1);
+            connection.invoke("SendMessage", user, message, chat_room_id);
             $("#message-box").val("").focus();
         });
 

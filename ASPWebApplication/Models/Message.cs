@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using ASPWebApplication.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ASPWebApplication.Models;
 
@@ -15,3 +19,4 @@ public class Message
     public required string SenderId { get; set; }
     public required IdentityUser SenderObj{ get; set; }
 }
+

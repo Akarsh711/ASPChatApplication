@@ -294,3 +294,8 @@ C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\ne
 C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\net7.0\runtimes\win-arm64\native\e_sqlite3.dll
 C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\net7.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\net7.0\runtimes\win-x86\native\e_sqlite3.dll
+C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\net7.0\Microsoft.AspNetCore.OpenApi.dll
+C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\net7.0\Microsoft.OpenApi.dll
+C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\net7.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\paliw\OneDrive\Desktop\ASPWebApplication\ASPWebApplication\bin\Debug\net7.0\Swashbuckle.AspNetCore.SwaggerUI.dll
